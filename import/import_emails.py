@@ -1,9 +1,10 @@
 import email
+import os
 import glob
 from html.parser import HTMLParser
 
-EMAIL_FOLDER = r"D:\Data\enron\maildir\lay-k"
-
+from dotenv import load_dotenv
+load_dotenv()
 
 def parse_single_email(filename):
     with open(filename) as f:
@@ -39,13 +40,13 @@ def parse_single_email(filename):
     }
 
 
-def parse_email_folder(folder_name, max_parse=None):
-    email_folder = folder_name + "\**\*_"
+def parse_email_folder(email_folder, max_parse=None):
 
     emails = []
     parse_count = 0
 
     for filepath in glob.glob(email_folder, recursive=True):
+        print(filepath)
         em = parse_single_email(filepath)
         emails.append(em)
         parse_count += 1
@@ -56,7 +57,8 @@ def parse_email_folder(folder_name, max_parse=None):
 
 
 def main():
-    emails = parse_email_folder(EMAIL_FOLDER, max_parse=10)
+    email_folder = os.getenv("EMAIL_FOLDER")
+    emails = parse_email_folder(email_folder, max_parse=10)
     print(len(emails))
     # print(emails[0])
 
