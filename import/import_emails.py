@@ -1,67 +1,56 @@
-import email
 import os
-import glob
-from html.parser import HTMLParser
+
+import weaviate
+
+from read_emails import get_email_data
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
-def parse_single_email(filename):
-    with open(filename) as f:
-        em = email.message_from_file(f)
 
-    class HTMLFilter(HTMLParser):
-        text = ""
+class VDB:
+    def __init__(self):
+        self.client = None
 
-        def handle_data(self, data):
-            self.text += data
+    def connect(self):
+        db_url = os.getenv("VDB_URL")
+        api_key = os.getenv("HUGGINGFACE_API_KEY")
 
-    payload = em.get_payload(decode=True)
-    f = HTMLFilter()
-    f.feed(payload.decode())
-    content = f.text
-
-    em_to = None
-    if em["cc"]:
-        em_to = [x.strip() for x in em["cc"].split(",")]
-
-    em_cc = None
-    if em["cc"]:
-        em_cc = [x.strip() for x in em["cc"].split(",")]
-
-    return {
-        # "content_type": em.get_content_type(),
-        "send_date": em["date"].strip(),
-        "em_from": em["from"].strip(),
-        "em_to": em_to,
-        "em_cc": em_cc,
-        "subject": em["subject"].strip(),
-        "content": content
-    }
+        self.client = weaviate.Client(
+            url=db_url,
+            additional_headers = {
+                "X-HuggingFace-Api-Key": api_key
+            }
+        )
+        return self
 
 
-def parse_email_folder(email_folder, max_parse=None):
+class EmailUploader:
 
-    emails = []
-    parse_count = 0
+    def create_schema(self):
+        class_obj = {
+            "class": "Email",
+            "vectorizer": "text2vec-huggingface"  # "text2vec-transformers"
+        }
 
-    for filepath in glob.glob(email_folder, recursive=True):
-        print(filepath)
-        em = parse_single_email(filepath)
-        emails.append(em)
-        parse_count += 1
-        if max_parse and parse_count >= max_parse:
-            break
+        db = VDB().connect()
+        # db.client.schema.delete_class("Email")  # uncomment to delete table if needed
+        db.client.schema.create_class(class_obj)
 
-    return emails
+    def insert_emails(self, email_data):
+        db = VDB().connect()
 
-
-def main():
-    email_folder = os.getenv("EMAIL_FOLDER")
-    emails = parse_email_folder(email_folder, max_parse=10)
-    print(len(emails))
-    # print(emails[0])
-
+        with db.client.batch as batch:
+            batch.batch_size=50
+            for email in email_data:
+                db.client.batch.add_data_object(email, "Email")
 
 if __name__ == "__main__":
-    main()
+    eup = EmailUploader()
+    # eup.create_schema()
+
+    email_data = get_email_data(max_emails=20)
+    eup.insert_emails(email_data)
+    print(len(email_data))
+    # print(email_data[0])
