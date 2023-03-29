@@ -64,5 +64,6 @@ def get_email_data(max_emails=None):
 
 
 if __name__ == "__main__":
-    emails = get_email_data()
+    emails = get_email_data(max_emails=2)
+    print(emails)
     print(len(emails))

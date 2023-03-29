@@ -26,7 +26,7 @@ class VDB:
         return self
 
 
-class EmailUploader:
+class EmailData:
 
     def create_schema(self):
         class_obj = {
@@ -46,11 +46,33 @@ class EmailUploader:
             for email in email_data:
                 db.client.batch.add_data_object(email, "Email")
 
+    def query(self, query_term, row_count=2):
+        db = VDB().connect()
+
+        search_headers = ["email_id", "send_date", "em_to", "subject", "content"]
+
+        nearText = {
+            "concepts": [query_term],
+        }
+
+        result = (
+            db.client.query.get("Email", search_headers)
+            .with_near_text(nearText)
+            .with_limit(row_count)
+            .do()
+        )
+
+        import json
+
+        r = json.dumps(result, indent=4)
+        print(r)
+
 if __name__ == "__main__":
-    eup = EmailUploader()
+    eup = EmailData()
+
     # eup.create_schema()
 
-    email_data = get_email_data(max_emails=20)
-    eup.insert_emails(email_data)
-    print(len(email_data))
-    # print(email_data[0])
+    # email_data = get_email_data(max_emails=20)
+    # eup.insert_emails(email_data)
+    
+    eup.query('green energy')    
