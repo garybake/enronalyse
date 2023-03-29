@@ -4,7 +4,7 @@ import json
 import weaviate
 from dotenv import load_dotenv
 
-from read_emails import get_email_data
+from read_emails import get_email_data, get_email_from_pickle
 
 load_dotenv()
 
@@ -67,11 +67,12 @@ class EmailData:
 
 if __name__ == "__main__":
     eup = EmailData()
-
+    
     # eup.create_schema()
 
     # email_data = get_email_data(max_emails=500)
+    # email_data = get_email_from_pickle(max_emails=2)
     # eup.insert_emails(email_data)
 
-    result = eup.query("the captain of the titanic")
-    print(json.dumps(result, indent=4))
+    # result = eup.query("the captain of the titanic")
+    # print(json.dumps(result, indent=4))

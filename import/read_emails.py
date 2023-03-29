@@ -2,6 +2,7 @@ import email
 import os
 import glob
 from html.parser import HTMLParser
+import pickle
 
 from dotenv import load_dotenv
 
@@ -61,8 +62,19 @@ def get_email_data(max_emails=None):
     emails = parse_email_folder(email_folder, max_parse=max_emails)
     return emails
 
+def pickle_emails(emails):
+    with open('emails_500.pkl', 'wb') as f:
+        pickle.dump(emails, f)
+
+def get_email_from_pickle(max_emails=None):
+    emails = []
+    with open('emails_500.pkl', 'rb') as f:
+        emails = pickle.load(f)
+    return emails[:max_emails]
+
 
 if __name__ == "__main__":
-    emails = get_email_data(max_emails=2)
-    print(emails)
+    emails = get_email_data(max_emails=500)
     print(len(emails))
+    
+    # pickle_emails(emails)
