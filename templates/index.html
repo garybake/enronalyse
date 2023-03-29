@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Enronalyse{% endblock %}
+
+{% block page_content %}
+<div class="container-fluid">
+    <div class="page-header">
+        <h1>Vector Search</h1>
+
+        <div class="row">
+            <div class="col-3">
+                <form id="vSearchForm" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="searchTermInput" class="form-label">Search term</label>
+                        <input name="searchTerm" type="text" class="form-control" id="searchTermInput"
+                            aria-describedby="searchTerm">
+                    </div>
+                    <div class="mb-1">
+                        <label for="searchRowCount" class="form-label">Email count</label>
+                        <input name="searchRowCount" type="number" class="form-control" id="searchRowCount" aria-describedby="searchRowCount" value="3">
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary" id="vSearchFormSubmit">Search</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-9">
+                <div class="container">
+                    <h3>Search Results</h3>
+                    <div class="list-group">
+                        <ul class="list-group" id="emailList">
+                            <li class="list-group-item">
+                                <table class="table">
+                                    <tbody>
+                                        <tr class="btn-primary">
+                                            <th scope="row">Subject</th>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">To</th>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Date</th>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Content</th>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{url_for('static', path='/js/index.js')}}"></script>
+{% endblock %}

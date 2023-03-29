@@ -73,5 +73,5 @@ if __name__ == "__main__":
     # email_data = get_email_data(max_emails=500)
     # eup.insert_emails(email_data)
 
-    result = eup.query("tasty donuts from france")
+    result = eup.query("the captain of the titanic")
     print(json.dumps(result, indent=4))
