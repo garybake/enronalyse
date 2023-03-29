@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 def parse_single_email(filename, idx):
     with open(filename) as f:
         em = email.message_from_file(f)
@@ -25,11 +24,11 @@ def parse_single_email(filename, idx):
 
     em_to = None
     if em["cc"]:
-        em_to = [x.strip() for x in em["cc"].split(",")]
+        em_to = str([x.strip() for x in em["cc"].split(",")])
 
     em_cc = None
     if em["cc"]:
-        em_cc = [x.strip() for x in em["cc"].split(",")]
+        em_cc = str([x.strip() for x in em["cc"].split(",")])
 
     return {
         # "content_type": em.get_content_type(),
