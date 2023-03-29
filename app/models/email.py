@@ -12,7 +12,7 @@ class Email:
 
     _fail_resp = {"status": "failure"}
 
-    def get_resumes(self, concepts, row_count=2) -> Dict:
+    def get_emails(self, concepts, row_count=2) -> Dict:
         db = VDB().connect()
 
         nearText = {
